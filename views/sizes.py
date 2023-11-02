@@ -14,11 +14,11 @@ class SizesView():
         Returns:
             None
             """
-        metal_model = Size()
+        size_model = Size()
 
         if url["pk"] != 0:
-            serialized_metal = json.dumps(metal_model.get_single(url["pk"]))
-            return handler.response(serialized_metal, status.HTTP_200_SUCCESS)
+            serialized_size = json.dumps(size_model.get_single(url["pk"]))
+            return handler.response(serialized_size, status.HTTP_200_SUCCESS)
 
-        serialized_metal = json.dumps(metal_model.get_all())
-        handler.response(serialized_metal, status.HTTP_200_SUCCESS)
+        serialized_sizes = json.dumps(size_model.get_all())
+        handler.response(serialized_sizes, status.HTTP_200_SUCCESS)
