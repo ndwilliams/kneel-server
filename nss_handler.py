@@ -23,7 +23,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             body (any): Data to send in response
             code (int): HTTP response code
         """
-        self.set_response_code(code.value)
+        self.set_response_code(code)
         self.wfile.write(body.encode())
 
     def get_request_body(self):

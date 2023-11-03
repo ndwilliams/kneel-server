@@ -62,3 +62,12 @@ class Metal:
                 metals.append(new_metal.__dict__)
 
             return metals
+
+    def db_create(self, data_tuple) -> int:
+        sql = """
+        INSERT INTO Metals Values(null, ?, ?)"""
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(sql, (data_tuple["type"], data_tuple["price"]))
+            return db_cursor.lastrowid

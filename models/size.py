@@ -62,3 +62,12 @@ class Size:
                 sizes.append(new_size.__dict__)
 
             return sizes
+
+    def db_create(self, data_tuple) -> int:
+        sql = """
+        INSERT INTO Sizes Values(null, ?, ?)"""
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(sql, (data_tuple["carets"], data_tuple["price"]))
+            return db_cursor.lastrowid
