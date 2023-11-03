@@ -31,3 +31,12 @@ class SizesView():
             return handler.response("", status.HTTP_201_CREATED.value)
         else:
             return handler.response("", status.HTTP_400_BAD_REQUEST.value)
+
+    def update(self, handler, size_data, url):
+        size_model = Size()
+
+        number_of_rows_updated = size_model.db_update(size_data, url)
+        if number_of_rows_updated > 0:
+            return handler.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+        else:
+            return handler.response("", status.HTTP_404_NOT_FOUND.value)
