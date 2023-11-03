@@ -12,58 +12,105 @@ class Order:
         self.size_id = 0
         self.style_id = 0
 
-    def create(self, id, metal_id, size_id, style_id, timestamp):
+    def create(self, id, metal_id, size_id, style_id):
         order = Order()
         order.id = id
         order.metal_id = metal_id
         order.size_id = size_id
         order.style_id = style_id
-        order.timestamp = timestamp
+
         return order
 
-    def get_single(self, pk):
-        sql = """
-        SELECT * FROM Orders WHERE id = ?
-        """
-        with sqlite3.connect(DB_PATH) as conn:
-            conn.row_factory = sqlite3.Row
-            db_cursor = conn.cursor()
-            db_cursor.execute(sql, (pk,))
-            row = db_cursor.fetchone()
+    # def get_single(self, url):
+    #     sql = """
+    #     SELECT * FROM Orders WHERE id = ?
+    #     """
+    #     with sqlite3.connect(DB_PATH) as conn:
+    #         conn.row_factory = sqlite3.Row
+    #         db_cursor = conn.cursor()
+    #         db_cursor.execute(sql, (url["pk"],))
+    #         row = db_cursor.fetchone()
 
-            new_order = self.create(
-                row["id"],
-                row["metal_id"],
-                row["size_id"],
-                row["style_id"],
-                row["timestamp"]
-            )
+    #         new_order = self.create(
+    #             row["id"],
+    #             row["metal_id"],
+    #             row["size_id"],
+    #             row["style_id"],
+    #             row["timestamp"]
+    #         )
 
-            return new_order.__dict__
+        # return new_order.__dict__
 
-    def get_all(self):
-        sql = """SELECT * FROM Orders"""
+    def get_all(self, url):
+        expansion = url["query_params"]["_expand"]
+        if any(parameter in expansion for parameter in ("metal", "size", "style")):
 
-        with sqlite3.connect(DB_PATH) as conn:
-            conn.row_factory = sqlite3.Row
-            db_cursor = conn.cursor()
-            db_cursor.execute(sql)
-            rows = db_cursor.fetchall()
+            sql = """SELECT
+                        o.id,
+                        o.metal_id,
+                        o.size_id,
+                        o.style_id,
+                        m.id metal_pk,
+                        m.type,
+                        m.price metal_price,
+                        si.id size_pk,
+                        si.carets,
+                        si.price size_price,
+                        st.id style_pk,
+                        st.name,
+                        st.price style_price
+                    FROM 
+                        Orders o
+                    JOIN 
+                        Sizes si ON o.size_id = si.id
+                    JOIN
+                        Styles st ON o.style_id = st.id
+                    JOIN 
+                        Metals m ON o.metal_id = m.id                
+                """
 
-            orders = []
+            with sqlite3.connect(DB_PATH) as conn:
+                conn.row_factory = sqlite3.Row
+                db_cursor = conn.cursor()
+                db_cursor.execute(sql)
+                rows = db_cursor.fetchall()
 
-            for row in rows:
-                new_order = self.create(
-                    row["id"],
-                    row["metal_id"],
-                    row["size_id"],
-                    row["style_id"],
-                    row["timestamp"]
-                )
+                orders = []
 
-                orders.append(new_order.__dict__)
+                for row in rows:
+                    metal = {
+                        "id": row["metal_pk"],
+                        "type": row["type"],
+                        "price": row["metal_price"]
 
-            return orders
+                    }
+                    size = {
+                        "id": row["size_pk"],
+                        "carets": row["carets"],
+                        "price": row["size_price"]
+                    }
+                    style = {
+                        "id": row["style_pk"],
+                        "name": row["name"],
+                        "price": row["style_price"]
+                    }
+
+                    new_order = self.create(
+                        row["id"],
+                        row["metal_id"],
+                        row["size_id"],
+                        row["style_id"]
+                    )
+                    if "metal" in expansion:
+                        new_order.metal = metal
+                    if "style" in expansion:
+                        new_order.style = style
+                    if "size" in expansion:
+                        new_order.size = size
+
+                    orders.append(new_order.__dict__)
+
+                return orders
 
     def db_create(self, data_tuple) -> int:
         sql = """
