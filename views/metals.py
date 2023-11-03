@@ -31,3 +31,12 @@ class MetalsView():
             return handler.response("", status.HTTP_201_CREATED.value)
         else:
             return handler.response("", status.HTTP_400_BAD_REQUEST.value)
+
+    def update(self, handler, metal_data, url):
+        metal_model = Metal()
+
+        number_of_rows_updated = metal_model.db_update(metal_data, url)
+        if number_of_rows_updated > 0:
+            return handler.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+        else:
+            return handler.response("", status.HTTP_404_NOT_FOUND.value)

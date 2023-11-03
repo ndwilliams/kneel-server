@@ -71,3 +71,18 @@ class Size:
             db_cursor = conn.cursor()
             db_cursor.execute(sql, (data_tuple["carets"], data_tuple["price"]))
             return db_cursor.lastrowid
+
+    def db_update(self, data_tuple, url) -> int:
+        sql = """
+        UPDATE Sizes 
+        SET 
+            carets = ?, 
+            price = ?
+        WHERE id = ? 
+        """
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(
+                sql, (data_tuple["carets"], data_tuple["price"], url["pk"]))
+            return db_cursor.rowcount

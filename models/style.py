@@ -71,3 +71,18 @@ class Style:
             db_cursor = conn.cursor()
             db_cursor.execute(sql, (data_tuple["name"], data_tuple["price"]))
             return db_cursor.lastrowid
+
+    def db_update(self, data_tuple, url) -> int:
+        sql = """
+        UPDATE Styles 
+        SET 
+            name = ?, 
+            price = ?
+        WHERE id = ? 
+        """
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(
+                sql, (data_tuple["name"], data_tuple["price"], url["pk"]))
+            return db_cursor.rowcount

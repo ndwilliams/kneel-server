@@ -23,13 +23,7 @@ class Order:
 
     def get_single(self, pk):
         sql = """
-        SELECT
-            o.id,
-            o.type,
-            o.price
-        FROM
-            Orders o
-        WHERE o.id = ?
+        SELECT * FROM Orders WHERE id = ?
         """
         with sqlite3.connect(DB_PATH) as conn:
             conn.row_factory = sqlite3.Row
@@ -80,3 +74,20 @@ class Order:
             db_cursor.execute(
                 sql, (data_tuple["metal_id"], data_tuple["size_id"], data_tuple["style_id"]))
             return db_cursor.lastrowid
+
+    def db_update(self, data_tuple, url) -> int:
+        sql = """
+        UPDATE Orders 
+        SET 
+            metal_id = ?, 
+            size_id = ?,
+            style_id = ?, 
+            timestamp = CURRENT_DATE
+        WHERE id =?
+        """
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(
+                sql, (data_tuple["metal_id"], data_tuple["size_id"], data_tuple["style_id"], url["pk"]))
+            return db_cursor.rowcount
