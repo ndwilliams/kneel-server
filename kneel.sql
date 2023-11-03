@@ -36,7 +36,7 @@ CREATE TABLE `Orders`
     `metal_id` INTEGER NOT NULL,
     `size_id` INTEGER NOT NULL,
     `style_id` INTEGER NOT NULL, 
-    `timestamp` DATETIME NOT NULL,
+    `timestamp` DATETIME DEFAULT CURRENT_DATE,
     FOREIGN KEY (`size_id`) REFERENCES `Sizes`(`id`),
     FOREIGN KEY (`metal_id`) REFERENCES `Metals`(`id`),
     FOREIGN KEY (`style_id`) REFERENCES `Styles`(`id`)
@@ -58,8 +58,8 @@ INSERT INTO `Styles` VALUES (null, 'Classic', 500);
 INSERT INTO `Styles` VALUES (null, 'Modern', 710);
 INSERT INTO `Styles` VALUES (null, 'Vintage', 965);
 
-INSERT INTO `Orders` VALUES (null, 1, 2, 3, '20120618 10:34:09 AM');
-INSERT INTO `Orders` VALUES (null, 3, 3, 1, '20230818 11:56:09 AM');
+INSERT INTO `Orders` (metal_id, size_id, style_id) VALUES (1, 2, 3);
+INSERT INTO `Orders` (metal_id, size_id, style_id) VALUES (3, 3, 1);
 
 
 

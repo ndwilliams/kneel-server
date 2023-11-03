@@ -62,3 +62,12 @@ class Style:
                 styles.append(new_style.__dict__)
 
             return styles
+
+    def db_create(self, data_tuple) -> int:
+        sql = """
+        INSERT INTO Styles Values(null, ?, ?)"""
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            db_cursor.execute(sql, (data_tuple["name"], data_tuple["price"]))
+            return db_cursor.lastrowid

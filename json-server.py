@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import MetalsView, SizesView, StylesView
+from views import MetalsView, SizesView, StylesView, OrdersView
 
 
 class JSONServer(HandleRequests):
@@ -16,17 +16,16 @@ class JSONServer(HandleRequests):
 
     def do_POST(self):
         # Parse the URL
-
+        url = self.parse_url(self.path)
         # Determine the correct view needed to handle the requests
-
+        view = self.determine_view(url)
         # Get the request body
-
-        # Invoke the correct method on the view
-
+        try:
+            # Invoke the correct method on the view
+            view.post(self, self.get_request_body())
         # Make sure you handle the AttributeError in case the client requested a route that you don't support
-
-        # Once you implement this method, delete the following line of code
-        return self.response("", status.HTTP_405_UNSUPPORTED)
+        except AttributeError:
+            pass
 
     def do_PUT(self):
         self.response("Unsupported method", status.HTTP_405_UNSUPPORTED)
@@ -47,7 +46,8 @@ class JSONServer(HandleRequests):
             routes = {
                 "metals": MetalsView,
                 "sizes": SizesView,
-                "styles": StylesView
+                "styles": StylesView,
+                "orders": OrdersView
             }
 
             matching_class = routes[url["requested_resource"]]
