@@ -59,7 +59,28 @@ INSERT INTO `Styles` VALUES (null, 'Modern', 710);
 INSERT INTO `Styles` VALUES (null, 'Vintage', 965);
 
 INSERT INTO `Orders` (metal_id, size_id, style_id) VALUES (1, 2, 3);
-INSERT INTO `Orders` (metal_id, size_id, style_id) VALUES (3, 3, 1);
-
-
-
+INSERT INTO `Orders` (metal_id, size_id, style_id) VALUES (3, 3, 1);   
+                
+                
+SELECT
+                        o.id,
+                        o.metal_id,
+                        o.size_id,
+                        o.style_id,
+                        m.id metal_pk,
+                        m.type,
+                        m.price metal_price,
+                        si.id size_pk,
+                        si.carets,
+                        si.price size_price,
+                        st.id style_pk,
+                        st.name,
+                        st.price style_price
+                    FROM 
+                        Orders o
+                    JOIN 
+                        Sizes si ON o.size_id = si.id
+                    JOIN
+                        Styles st ON o.style_id = st.id
+                    JOIN 
+                        Metals m ON o.metal_id = m.id     

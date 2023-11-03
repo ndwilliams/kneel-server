@@ -17,10 +17,10 @@ class OrdersView():
         order_model = Order()
 
         if url["pk"] != 0:
-            serialized_order = json.dumps(order_model.get_single(url["pk"]))
+            serialized_order = json.dumps(order_model.get_single(url))
             return handler.response(serialized_order, status.HTTP_200_SUCCESS.value)
 
-        serialized_orders = json.dumps(order_model.get_all())
+        serialized_orders = json.dumps(order_model.get_all(url))
         handler.response(serialized_orders, status.HTTP_200_SUCCESS.value)
 
     def post(self, handler, order_data):
